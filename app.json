@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "HelloWorld",
-    "slug": "expo-template-default",
+    "name": "paradice",
+    "slug": "paradice",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -9,13 +9,15 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.obstsalatorg.paradice"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.obstsalatorg.paradice"
     },
     "web": {
       "bundler": "metro",
@@ -36,6 +38,18 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "25b87502-64c4-4702-88f4-b4e7f8e3c5f9"
+      }
+    },
+    "owner": "obstsalat-org",
+    "updates": {
+      "url": "https://u.expo.dev/25b87502-64c4-4702-88f4-b4e7f8e3c5f9"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
     }
   }
 }
