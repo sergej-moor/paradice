@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Pressable, Text, View } from "react-native";
 import Animated, {
   cancelAnimation,
@@ -12,7 +12,11 @@ import Animated, {
 import { DICE_COLORS } from "../constants/diceConstants";
 import { useDiceStore } from "../store/diceStore";
 import { DiceType } from "../types/dice";
-import { rollDice, triggerRollHaptics } from "../utils/diceUtils";
+import {
+  rollDice,
+  triggerPressHaptics,
+  triggerRollHaptics,
+} from "../utils/diceUtils";
 
 interface DiceButtonProps {
   type: DiceType;
@@ -23,6 +27,7 @@ export function DiceButton({ type }: DiceButtonProps) {
     useDiceStore();
   const scale = useSharedValue(1);
   const rotation = useSharedValue(0);
+  const hapticIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }, { rotate: `${rotation.value}deg` }],
@@ -39,11 +44,29 @@ export function DiceButton({ type }: DiceButtonProps) {
     );
   };
 
-  const handlePressIn = () => {
+  const startContinuousHaptics = () => {
+    // Initial haptic
+    triggerPressHaptics();
+
+    // Set up interval for continuous haptics
+    hapticIntervalRef.current = setInterval(() => {
+      triggerPressHaptics();
+    }, 100); // Adjust this value to control vibration frequency
+  };
+
+  const stopContinuousHaptics = () => {
+    if (hapticIntervalRef.current) {
+      clearInterval(hapticIntervalRef.current);
+      hapticIntervalRef.current = null;
+    }
+  };
+
+  const handlePressIn = async () => {
     if (isRolling) return;
 
     setIsCharging(true);
     startRotationAnimation();
+    startContinuousHaptics();
     scale.value = withSpring(0.9);
   };
 
@@ -51,6 +74,7 @@ export function DiceButton({ type }: DiceButtonProps) {
     if (isRolling) return;
 
     setIsCharging(false);
+    stopContinuousHaptics();
     scale.value = withSpring(0.9); // Keep the scale down during roll
 
     await triggerRollHaptics();
@@ -63,9 +87,17 @@ export function DiceButton({ type }: DiceButtonProps) {
       result,
       timestamp: Date.now(),
     });
-
-    // The rotation will continue until isRolling becomes false
   };
+
+  // Clean up interval on unmount or when rolling starts
+  useEffect(() => {
+    if (isRolling) {
+      stopContinuousHaptics();
+    }
+    return () => {
+      stopContinuousHaptics();
+    };
+  }, [isRolling]);
 
   // Watch for isRolling changes to stop the animation
   useEffect(() => {

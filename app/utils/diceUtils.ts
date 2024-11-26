@@ -8,3 +8,7 @@ export const rollDice = (type: DiceType): number => {
 export const triggerRollHaptics = async () => {
   await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 };
+
+export const triggerPressHaptics = async () => {
+  await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+};
