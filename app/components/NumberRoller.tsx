@@ -82,7 +82,7 @@ export function NumberRoller() {
   }, []);
 
   return (
-    <View className="h-[60px] overflow-hidden bg-slate-800/50 rounded-xl mb-8">
+    <View className="h-[70px] overflow-hidden bg-slate-800/50 rounded-xl mb-8">
       <Animated.View style={animatedStyle}>
         {/* Add more duplicate numbers for smoother transitions */}
         {[...NUMBERS, ...NUMBERS, ...NUMBERS].map((num, index) => (
@@ -91,7 +91,7 @@ export function NumberRoller() {
             style={{ height: ITEM_HEIGHT }}
             className="items-center justify-center"
           >
-            <Text className="text-4xl font-bold text-white">{num}</Text>
+            <Text className="text-6xl mt-4  font-bold text-white">{num}</Text>
           </View>
         ))}
       </Animated.View>
