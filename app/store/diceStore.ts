@@ -1,24 +1,25 @@
 import { create } from "zustand";
-import { DiceRoll, SavedCombination } from "../types/dice";
+import { DiceRoll } from "../types/dice";
 
 interface DiceState {
   history: DiceRoll[];
-  savedCombinations: SavedCombination[];
+  isRolling: boolean;
+  currentRoll: number | null;
   addRoll: (roll: DiceRoll) => void;
-  saveCombination: (combination: SavedCombination) => void;
+  setIsRolling: (isRolling: boolean) => void;
+  setCurrentRoll: (roll: number) => void;
   clearHistory: () => void;
 }
 
 export const useDiceStore = create<DiceState>((set) => ({
   history: [],
-  savedCombinations: [],
+  isRolling: false,
+  currentRoll: null,
   addRoll: (roll) =>
     set((state) => ({
       history: [roll, ...state.history].slice(0, 50),
     })),
-  saveCombination: (combination) =>
-    set((state) => ({
-      savedCombinations: [...state.savedCombinations, combination],
-    })),
+  setIsRolling: (isRolling) => set({ isRolling }),
+  setCurrentRoll: (roll) => set({ currentRoll: roll }),
   clearHistory: () => set({ history: [] }),
 }));

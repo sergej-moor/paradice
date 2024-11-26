@@ -14,18 +14,16 @@ interface DiceButtonProps {
 }
 
 export function DiceButton({ type }: DiceButtonProps) {
-  const addRoll = useDiceStore((state) => state.addRoll);
+  const { addRoll, setIsRolling, setCurrentRoll, isRolling } = useDiceStore();
   const scale = useSharedValue(1);
-  const history = useDiceStore((state) => state.history);
-
-  // Get the last roll for this dice type
-  const lastRoll = history.find((roll) => roll.type === type);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
   }));
 
   const handlePress = async () => {
+    if (isRolling) return; // Prevent rolling while animation is in progress
+
     // Button press animation
     scale.value = withSpring(0.9, {}, () => {
       scale.value = withSpring(1);
@@ -34,8 +32,14 @@ export function DiceButton({ type }: DiceButtonProps) {
     // Haptic feedback
     await triggerRollHaptics();
 
-    // Roll dice and save to store
+    // Roll dice
     const result = rollDice(type);
+
+    // Start rolling animation
+    setIsRolling(true);
+    setCurrentRoll(result);
+
+    // Add to history
     addRoll({
       id: Date.now().toString(),
       type,
@@ -53,11 +57,6 @@ export function DiceButton({ type }: DiceButtonProps) {
       >
         <View className="items-center">
           <Text className="text-2xl font-bold text-white">d{type}</Text>
-          {lastRoll && (
-            <Text className="text-sm text-white/80 mt-1">
-              {lastRoll.result}
-            </Text>
-          )}
         </View>
       </Pressable>
     </Animated.View>
